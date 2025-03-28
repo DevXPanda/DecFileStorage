@@ -27,19 +27,16 @@ Authentication: Supabase Auth, Web3 Wallets
 1️⃣ Clone the Repository
 sh
 Copy
-Edit
 git clone https://github.com/DevXPanda/DCFIleStorage.git
 cd DCFileStorage
 2️⃣ Install Dependencies
 sh
 Copy
-Edit
 npm install
 3️⃣ Set Up Environment Variables
 Create a .env file in the root directory and add the following:
 
-ini
-Copy
+init
 Edit
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_key
@@ -50,14 +47,12 @@ VITE_PINATA_SECRET_API_KEY=your_pinata_secret_key
 4️⃣ Start the Development Server
 sh
 Copy
-Edit
 npm run dev
 Open http://localhost:5173 in your browser. 🚀
 
 🛠 Project Structure
 php
 Copy
-Edit
 DCFileStorage/
 │── src/
 │   ├── components/       # Reusable UI components
