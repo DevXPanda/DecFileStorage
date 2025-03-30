@@ -8,7 +8,7 @@ import { ShareModal } from './components/ShareModal';
 import { WalletStatus } from './components/WalletStatus';
 import { SharedFileViewer } from './components/SharedFileViewer';
 import { toast } from 'react-hot-toast';
-import { SignIn, SignUp, useUser, SignOutButton } from '@clerk/clerk-react';
+import { SignIn, SignUp, useUser, SignOutButton, useClerk } from '@clerk/clerk-react';
 
 interface FileItem {
   cid: string;
@@ -24,6 +24,7 @@ function App() {
   const [hasPinataKeys, setHasPinataKeys] = useState(false);
   const [isSharedView, setIsSharedView] = useState(false);
   const { isSignedIn, user } = useUser();
+  const { openSignIn } = useClerk();
   
   // Check if we're viewing a shared file link
   useEffect(() => {
@@ -145,7 +146,7 @@ function App() {
 
   const renderNotConnected = () => (
     <div className="min-h-[80vh] flex flex-col items-center justify-center p-4 sm:p-6 text-center bg-gradient-to-b from-gray-50 to-white">
-      <div className="bg-gradient-to-r from-violet-100 to-indigo-100 rounded-full p-6 mb-8 shadow-lg shadow-violet-100/50 animate-pulse">
+      <div className="bg-gradient-to-r from-violet-100 to-indigo-100 rounded-full p-6 mb-8 shadow-lg shadow-violet-100/50">
         <HardDrive className="h-12 w-12 text-violet-600" />
       </div>
       <h2 className="text-3xl sm:text-4xl font-bold mb-4 bg-gradient-to-r from-violet-600 to-indigo-600 inline-block text-transparent bg-clip-text">
@@ -155,59 +156,21 @@ function App() {
         Choose your preferred authentication method to securely store and share files
       </p>
       
-      <div className="w-full max-w-md mx-auto space-y-8">
-        {/* Wallet Connection */}
-        {/* <div className="group bg-white p-8 rounded-2xl shadow-xl shadow-gray-200/70 border border-gray-100 hover:shadow-2xl hover:shadow-violet-200/40 hover:border-violet-100 transition-all duration-300 ">
-          <div className="mb-6 bg-gradient-to-r from-violet-50 to-indigo-50 w-14 h-14 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-    
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="url(#wallet-gradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7">
-              <defs>
-                <linearGradient id="wallet-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#8B5CF6" />
-                  <stop offset="100%" stopColor="#6366F1" />
-                </linearGradient>
-              </defs>
-              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13.8 12H3" />
-            </svg>
-          </div>
-          <h3 className="text-xl font-semibold mb-4 text-gray-800">Connect with Wallet</h3>
-          <button
-            onClick={handleConnectWallet}
-            className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl hover:from-violet-700 hover:to-indigo-700 transform hover:translate-y-[-1px] transition-all duration-300 shadow-lg shadow-violet-600/25 hover:shadow-xl hover:shadow-violet-600/30"
-          >
-            <span className="text-lg font-medium">Connect Wallet</span>
-          </button>
-        </div> */}
-
-        {/* Clerk Authentication */}
-        {/* <div className="group bg-white p-8 rounded-2xl shadow-xl shadow-gray-200/70 border border-gray-100 hover:shadow-2xl hover:shadow-violet-200/40 hover:border-violet-100 transition-all duration-300"> */}
-          {/* <div className="mb-6 bg-gradient-to-r from-violet-50 to-indigo-50 w-14 h-14 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="url(#email-gradient)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-7 h-7">
-              <defs>
-                <linearGradient id="email-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#8B5CF6" />
-                  <stop offset="100%" stopColor="#6366F1" />
-                </linearGradient>
-              </defs>
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-              <polyline points="22,6 12,13 2,6" />
-            </svg>
-          </div> */}
-          <h3 className="text-xl font-semibold mb-4 text-gray-800"></h3>
-          <div className="w-full flex justify-center items-center">
-            <SignIn 
-              appearance={{
-                elements: {
-                  card: "shadow-none",
-                  formButtonPrimary: "bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-sm normal-case rounded-xl px-6 py-4 shadow-lg shadow-violet-600/25 hover:shadow-xl hover:shadow-violet-600/30 transition-all duration-300"
-                }
-              }}
-            />
+      <div className="w-full max-w-md mx-auto">
+        <div className="bg-white p-8 rounded-2xl shadow-xl shadow-gray-200/70 border border-gray-100">
+          <div className="text-center">
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Welcome to DCFileStorage</h3>
+            <p className="text-gray-600 mb-8">Please sign in to continue</p>
+            <button
+              onClick={() => openSignIn()}
+              className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-xl hover:from-violet-700 hover:to-indigo-700 transition-all duration-300 shadow-lg shadow-violet-600/25 hover:shadow-xl hover:shadow-violet-600/30"
+            >
+              Sign In
+            </button>
           </div>
         </div>
       </div>
-
-     //</div>
+    </div>
   );
   
   const renderPinataConfig = () => (
@@ -361,12 +324,16 @@ function App() {
               />
             )} */}
             {isSignedIn && (
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">
-                  {user?.primaryEmailAddress?.emailAddress}
-                </span>
+              <div className="flex items-center gap-4 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-lg shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
+                <div className="flex items-center gap-3">
+                  <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                  <span className="text-sm text-gray-600 font-medium">
+                    {user?.primaryEmailAddress?.emailAddress}
+                  </span>
+                </div>
+                <div className="h-4 w-px bg-gray-200"></div>
                 <SignOutButton>
-                  <button className="px-4 py-2 text-sm text-red-600 hover:text-red-800">
+                  <button className="text-sm font-medium text-red-600 hover:text-red-700 transition-colors">
                     Sign Out
                   </button>
                 </SignOutButton>

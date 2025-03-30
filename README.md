@@ -1,78 +1,79 @@
-Decentralized File Storage
-A secure and decentralized file storage system using blockchain and IPFS for immutable and censorship-resistant data storage.
+# DCFileStorage - Decentralized File Storage System
 
-🚀 Features
-📂 File Upload & Retrieval: Store files securely on a decentralized network.
+A modern, secure decentralized file storage system built with React, allowing users to store and share files using blockchain technology and IPFS.
 
-🔐 Blockchain Security: Ensures integrity and transparency.
+## 🚀 Features
 
-🏦 Supabase Integration: Manage user authentication and file metadata.
+- 📂 **Secure File Storage**: Store files securely on IPFS
+- 🔐 **Authentication**: Email and social login via Clerk
+- 🌐 **File Sharing**: Generate secure shareable links
+- 💫 **Modern UI**: Beautiful, responsive interface with Tailwind CSS
+- 🔒 **Blockchain Integration**: Decentralized storage using IPFS
 
-📡 IPFS & Pinata: Store and retrieve files with a distributed network.
+## 🛠️ Tech Stack
 
-📤 File Sharing: Generate shareable links with controlled access.
+- **Frontend**: React + TypeScript + Vite
+- **Styling**: Tailwind CSS
+- **Authentication**: Clerk
+- **Storage**: IPFS via Pinata
+- **State Management**: React Hooks
+- **UI Components**: Custom components with Tailwind
 
-💳 Wallet Integration: Connect MetaMask or other crypto wallets.
+## 📦 Installation
 
-⚡ Tech Stack
-Frontend: React (Vite.js), TypeScript, Tailwind CSS
-
-Backend: Node.js (Express.js), Supabase
-
-Storage: IPFS (via Pinata), Blockchain
-
-Authentication: Supabase Auth, Web3 Wallets
-
-🎯 Installation & Setup
-1️⃣ Clone the Repository
-sh
-Copy
-git clone https://github.com/DevXPanda/DCFIleStorage.git
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/DCFileStorage.git
 cd DCFileStorage
-2️⃣ Install Dependencies
-sh
-Copy
-npm install
-3️⃣ Set Up Environment Variables
-Create a .env file in the root directory and add the following:
+```
 
-init
-Edit
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Create a `.env` file in the root directory with your API keys:
+```env
+VITE_CLERK_PUBLISHABLE_KEY=your_clerk_key
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_key
-VITE_PINATA_API_KEY=your_pinata_api_key
-VITE_PINATA_SECRET_API_KEY=your_pinata_secret_key
-(Make sure .env is included in .gitignore to protect sensitive data.)
+```
 
-4️⃣ Start the Development Server
-sh
-Copy
+4. Start the development server:
+```bash
 npm run dev
-Open http://localhost:5173 in your browser. 🚀
+```
 
-🛠 Project Structure
-php
-Copy
-DCFileStorage/
-│── src/
-│   ├── components/       # Reusable UI components
-│   ├── hooks/            # Custom React hooks
-│   ├── lib/              # Utility functions & API integrations
-│   ├── main.tsx          # Entry point for the app
-│── supabase/             # Supabase database migrations
-│── public/               # Static assets
-│── .gitignore            # Ignored files
-│── tailwind.config.js    # TailwindCSS configuration
-│── vite.config.ts        # Vite configuration
-│── README.md             # Project documentation
-📜 Usage
-Upload Files – Choose files and upload them securely.
+## 🔧 Configuration
 
-Generate Links – Get a decentralized link for sharing.
+- **Clerk**: Set up your Clerk application and add the publishable key to `.env`
+- **Supabase**: Configure your Supabase instance and add credentials to `.env`
+- **IPFS/Pinata**: Set up your Pinata account for IPFS storage
 
-Access Files – Retrieve files anytime, anywhere.
+## 🌟 Usage
 
-🚀 Connect with Me
-👤 DevXPanda
-📧 Email: Satyamkumarpandey4567@gmail.com
-🌐 GitHub: DevXPanda
+1. Sign in using email or social providers
+2. Upload files using the drag-and-drop interface
+3. View your uploaded files in the dashboard
+4. Generate shareable links for your files
+5. Manage file access and permissions
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👤 Contact
+
+- GitHub: [@yourusername](https://github.com/yourusername)
+- Email: your.email@example.com
+
+## 🙏 Acknowledgments
+
+- [Clerk](https://clerk.dev/) for authentication
+- [IPFS](https://ipfs.io/) for decentralized storage
+- [Tailwind CSS](https://tailwindcss.com/) for styling
+- [Vite](https://vitejs.dev/) for the build tool
