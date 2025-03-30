@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { File, Download, Trash2, Calendar, HardDrive, Share2 } from 'lucide-react';
 import { formatBytes } from '../lib/utils';
 import { getPinataUrl } from '../lib/pinata';
@@ -90,8 +90,7 @@ export function FileList({ files, onDelete, onShare }: FileListProps) {
               />
               <a
                 href={getPinataUrl(file.cid)}
-                target="_blank"
-                rel="noreferrer"
+                download={file.name}
                 className="p-2 text-gray-500 hover:text-blue-600 rounded-full hover:bg-blue-50 transition-colors"
                 title="Download"
               >

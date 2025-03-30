@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Download, FileText, ArrowLeft, ExternalLink, Lock, Calendar, Eye } from 'lucide-react';
-import { getPinataUrl, getIpfsUrls } from '../lib/pinata';
+import { getPinataUrl, getIpfsUrls, getPinataDownloadUrl } from '../lib/pinata';
 import { toast } from 'react-hot-toast';
 
 interface SharedFileViewerProps {
@@ -21,6 +21,9 @@ export function SharedFileViewer({ onBack }: SharedFileViewerProps) {
   const [passwordInput, setPasswordInput] = useState('');
   const [isPasswordVerified, setIsPasswordVerified] = useState(false);
   const [isExpired, setIsExpired] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   useEffect(() => {
     // Parse the URL query parameters to extract share information
@@ -82,15 +85,25 @@ export function SharedFileViewer({ onBack }: SharedFileViewerProps) {
   const verifyPassword = () => {
     if (!fileInfo || !fileInfo.passwordHash) return;
     
-    // Simple hash verification - in a real app, use a more secure method
-    const inputHash = btoa(passwordInput);
+    // Reset error state
+    setPasswordError(null);
+    setIsVerifying(true);
     
-    if (inputHash === fileInfo.passwordHash) {
-      setIsPasswordVerified(true);
-      toast.success('Password verified');
-    } else {
-      toast.error('Incorrect password');
-    }
+    // Simulate a small delay for better UX
+    setTimeout(() => {
+      // Simple hash verification - in a real app, use a more secure method
+      const inputHash = btoa(passwordInput);
+      
+      if (inputHash === fileInfo.passwordHash) {
+        setIsPasswordVerified(true);
+        setPasswordError(null);
+        toast.success('Password verified successfully');
+      } else {
+        setPasswordError('Incorrect password. Please try again.');
+        toast.error('Incorrect password');
+      }
+      setIsVerifying(false);
+    }, 500);
   };
 
   if (loading) {
@@ -139,10 +152,10 @@ export function SharedFileViewer({ onBack }: SharedFileViewerProps) {
 
           <h1 className="font-medium text-gray-900">Protected File</h1>
 
-          <div className="w-24"></div> {/* Empty div for flex balance */}
+          <div className="w-24"></div>
         </div>
 
-        <div className="flex-1 container mx-auto max-w-md p-6 flex items-center justify-center">
+        <div className="flex-1 container mx-auto max-w-md px-6 -mt-12 flex items-start pt-20 justify-center">
           <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden w-full">
             <div className="bg-gradient-to-r from-blue-500 to-indigo-600 px-6 py-4">
               <h2 className="text-xl font-bold text-white flex items-center">
@@ -169,20 +182,49 @@ export function SharedFileViewer({ onBack }: SharedFileViewerProps) {
                   <input
                     type="password"
                     value={passwordInput}
-                    onChange={(e) => setPasswordInput(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    onChange={(e) => {
+                      setPasswordInput(e.target.value);
+                      setPasswordError(null); // Clear error when typing
+                    }}
+                    className={`w-full pl-10 pr-4 py-3 border rounded-xl transition-all ${
+                      passwordError 
+                        ? 'border-red-300 focus:ring-red-500 focus:border-red-500' 
+                        : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                    }`}
                     placeholder="Enter password"
-                    onKeyPress={(e) => e.key === 'Enter' && verifyPassword()}
+                    onKeyPress={(e) => e.key === 'Enter' && !isVerifying && verifyPassword()}
                   />
                 </div>
+                {passwordError && (
+                  <div className="mt-2 text-sm text-red-600 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    {passwordError}
+                  </div>
+                )}
               </div>
               
               <button
                 onClick={verifyPassword}
-                className="w-full flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg"
+                disabled={isVerifying || !passwordInput}
+                className={`w-full flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl transition-all shadow-md ${
+                  isVerifying || !passwordInput
+                    ? 'opacity-50 cursor-not-allowed'
+                    : 'hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg'
+                }`}
               >
-                <Eye className="h-5 w-5" />
-                <span className="font-medium">View File</span>
+                {isVerifying ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                    <span className="font-medium">Verifying...</span>
+                  </>
+                ) : (
+                  <>
+                    <Eye className="h-5 w-5" />
+                    <span className="font-medium">View File</span>
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -210,20 +252,72 @@ export function SharedFileViewer({ onBack }: SharedFileViewerProps) {
   
   const fileType = getFileType(fileExtension);
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    const toastId = toast.loading('Starting download...');
+
     try {
-      // Get the main gateway URL
-      const mainUrl = getPinataUrl(cid);
-      window.open(mainUrl, '_blank');
-      toast.success('Download started');
+      const downloadUrl = `https://gateway.pinata.cloud/ipfs/${cid}?download=true&filename=${encodeURIComponent(fileName)}`;
+      
+      // Create a temporary anchor element for download
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.download = fileName; // Set the filename
+      link.target = '_blank'; // Open in new tab if direct download fails
+      link.rel = 'noopener noreferrer';
+      document.body.appendChild(link);
+      
+      // Trigger the download
+      link.click();
+      
+      // Cleanup
+      document.body.removeChild(link);
+      
+      // Show success message after a short delay
+      setTimeout(() => {
+        setIsDownloading(false);
+        toast.dismiss(toastId);
+        
+        toast.custom((t) => (
+          <div className={`${
+            t.visible ? 'animate-enter' : 'animate-leave'
+          } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}>
+            <div className="flex-1 w-0 p-4">
+              <div className="flex items-start">
+                <div className="flex-shrink-0 pt-0.5">
+                  <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                    <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
+                </div>
+                <div className="ml-3 flex-1">
+                  <p className="text-sm font-medium text-gray-900">
+                    Download Started
+                  </p>
+                  <p className="mt-1 text-sm text-gray-500">
+                    If the download doesn't start automatically, click the download button again
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="flex border-l border-gray-200">
+              <button
+                onClick={() => toast.dismiss(t.id)}
+                className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        ), { duration: 3000 });
+      }, 1000);
+
     } catch (error) {
       console.error('Download error:', error);
-      toast.error('Failed to download file. Trying alternate gateway...');
-      
-      // Try the second gateway if available
-      if (fallbackUrls.length > 1) {
-        window.open(fallbackUrls[1], '_blank');
-      }
+      setIsDownloading(false);
+      toast.dismiss(toastId);
+      toast.error('Failed to start download. Please try again.');
     }
   };
 
@@ -293,35 +387,27 @@ export function SharedFileViewer({ onBack }: SharedFileViewerProps) {
             <div className="border-t border-gray-100 pt-6">
               <button
                 onClick={handleDownload}
-                className="w-full flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg"
+                disabled={isDownloading}
+                className="w-full flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Download className="h-5 w-5" />
-                <span className="font-medium">Download {fileType}</span>
+                {isDownloading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                    <span className="font-medium">Downloading {fileType}...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download className="h-5 w-5" />
+                    <span className="font-medium">Download {fileType}</span>
+                  </>
+                )}
               </button>
               
-              {fallbackUrls.length > 0 && (
-                <div className="mt-4">
-                  <p className="text-sm text-gray-700 mb-2">If download doesn't start, try these alternate links:</p>
-                  <div className="flex flex-wrap gap-2">
-                    {fallbackUrls.slice(0, 3).map((url, index) => (
-                      <a 
-                        key={index}
-                        href={url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center space-x-1 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-xs text-gray-700 transition-colors"
-                      >
-                        <ExternalLink className="h-3 w-3" />
-                        <span>Gateway {index + 1}</span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              <p className="text-center text-xs text-gray-500 mt-4">
-                Files are stored on IPFS and accessible directly through multiple gateways
-              </p>
+              <div className="mt-4">
+                <p className="text-center text-xs text-gray-500">
+                  Files are stored securely on IPFS and accessible through our gateway
+                </p>
+              </div>
             </div>
           </div>
         </div>

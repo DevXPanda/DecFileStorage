@@ -158,3 +158,8 @@ export function getIpfsUrls(hash: string) {
   // Return URLs from all gateways
   return IPFS_GATEWAYS.map(gateway => `${gateway}${hash}`);
 }
+
+export const getPinataDownloadUrl = (cid: string) => {
+  // Use gateway.pinata.cloud which has better download support
+  return `https://gateway.pinata.cloud/ipfs/${cid}?download=true`;
+};

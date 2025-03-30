@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import  { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { Share2, Link2, X, Lock, Calendar, Copy, ExternalLink } from 'lucide-react';
 import { toast } from 'react-hot-toast';
