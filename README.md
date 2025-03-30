@@ -66,11 +66,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👤 Contact
-
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your.email@example.com
-
 ## 🙏 Acknowledgments
 
 - [Clerk](https://clerk.dev/) for authentication
