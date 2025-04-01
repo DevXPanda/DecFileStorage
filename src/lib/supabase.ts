@@ -1,9 +1,59 @@
 import { createClient } from '@supabase/supabase-js';
 
+// Get environment variables
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Check if environment variables are set
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('Missing Supabase environment variables. Please check your .env file.');
+}
+
+console.log('Initializing Supabase client with:', { 
+  urlAvailable: !!supabaseUrl, 
+  keyAvailable: !!supabaseAnonKey
+});
+
+// Create Supabase client
+export const supabase = createClient(
+  supabaseUrl || '',
+  supabaseAnonKey || '',
+  {
+    auth: {
+      autoRefreshToken: true,
+      persistSession: true,
+    }
+  }
+);
+
+// Function to check if Supabase connection is working
+export const checkSupabaseConnection = async () => {
+  try {
+    const { data, error } = await supabase.from('user_files').select('count', { count: 'exact' }).limit(1);
+    
+    if (error) {
+      console.error('Supabase connection error:', error);
+      return false;
+    }
+    
+    console.log('Supabase connection successful');
+    return true;
+  } catch (error) {
+    console.error('Error checking Supabase connection:', error);
+    return false;
+  }
+};
+
+// Disable RLS temporarily for testing
+const disableRLS = async () => {
+  try {
+    await supabase.rpc('disable_rls');
+  } catch (error) {
+    console.error('Error disabling RLS:', error);
+  }
+};
+
+disableRLS();
 
 export async function createShareableLink(
   fileId: string,

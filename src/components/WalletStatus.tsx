@@ -9,7 +9,7 @@ interface WalletStatusProps {
   chainId?: number;
 }
 
-export function WalletStatus({ isConnected, address, onConnect, onDisconnect, chainId }: WalletStatusProps) {
+export const WalletStatus: React.FC<WalletStatusProps> = ({ isConnected, address, onConnect, onDisconnect, chainId }) => {
   const getNetworkName = (chainId: number) => {
     switch (chainId) {
       case 1:
@@ -25,51 +25,41 @@ export function WalletStatus({ isConnected, address, onConnect, onDisconnect, ch
     }
   };
 
-  // Show condensed address for small screens
-  const formatAddress = (address: string) => {
+  const truncateAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
 
-  if (!isConnected) {
+  if (!isConnected || !address) {
     return (
       <button
         onClick={onConnect}
-        className="flex items-center space-x-2 px-4 sm:px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-all duration-300 shadow-md hover:shadow-lg text-xs sm:text-sm"
+        className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-violet-600 to-indigo-600 text-white rounded-full hover:from-violet-700 hover:to-indigo-700 transition-all duration-300 shadow-lg shadow-violet-600/25 hover:shadow-xl hover:shadow-violet-600/30 text-sm font-medium w-full sm:w-auto justify-center"
       >
-        <LogIn className="w-4 h-4" />
-        <span className="font-medium">Connect Wallet</span>
+        Connect Wallet
       </button>
     );
   }
 
   return (
-    <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
-      <div className="flex items-center gap-2 px-3 py-1.5 bg-white/80 rounded-lg text-xs sm:text-sm">
-        <div className="h-2 w-2 rounded-full bg-green-500" />
-        <span className="font-medium text-gray-800 hidden sm:inline">Connected</span>
-        {chainId && (
-          <span className="text-xs text-gray-600 hidden md:inline">
-            ({getNetworkName(chainId)})
-          </span>
-        )}
+    <div className="flex items-center gap-3 bg-white/95 backdrop-blur-sm px-4 py-2 rounded-full shadow-sm border border-white/20 hover:shadow-md transition-all duration-300 w-full sm:w-auto">
+      <div className="flex items-center gap-2 min-w-0 flex-1 sm:flex-initial">
+        <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse shrink-0"></div>
+        <span className="text-sm text-gray-700 font-medium truncate">
+          {truncateAddress(address)}
+          {chainId && (
+            <span className="hidden sm:inline text-gray-500 ml-1">
+              ({getNetworkName(chainId)})
+            </span>
+          )}
+        </span>
       </div>
-      
-      {address && (
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-white/80 rounded-lg text-xs sm:text-sm">
-          <Wallet className="w-3 h-3 sm:w-4 sm:h-4 text-blue-500" />
-          <span className="font-medium text-gray-800">
-            {formatAddress(address)}
-          </span>
-        </div>
-      )}
-      
+      <div className="h-4 w-px bg-gray-200 shrink-0"></div>
       <button
         onClick={onDisconnect}
-        className="flex items-center gap-1 sm:gap-2 px-3 py-1.5 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-300 text-xs sm:text-sm"
+        className="text-sm font-medium text-red-600 hover:text-red-700 transition-colors whitespace-nowrap"
       >
-        <LogOut className="w-3 h-3 sm:w-4 sm:h-4" />
-        <span className="font-medium">Disconnect</span>
+        Disconnect
       </button>
     </div>
   );
-}
+};
