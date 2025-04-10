@@ -328,7 +328,7 @@ function App() {
       <div className="w-full max-w-md mx-auto">
         <div className="bg-white p-8 rounded-2xl shadow-xl shadow-gray-200/70 border border-gray-100">
           <div className="text-center">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">Welcome to DCFileStorage</h3>
+            <h3 className="text-xl font-semibold text-gray-800 mb-4">Welcome to DECFileStorage</h3>
             <p className="text-gray-600 mb-8">Please sign in to continue</p>
             <button
               onClick={() => openSignIn()}
