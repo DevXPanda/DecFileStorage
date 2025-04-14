@@ -23,7 +23,7 @@ A modern, secure decentralized file storage system built with React, allowing us
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/DCFileStorage.git
+git clone https://github.com/DevXPanda/DCFileStorage.git
 cd DCFileStorage
 ```
 
